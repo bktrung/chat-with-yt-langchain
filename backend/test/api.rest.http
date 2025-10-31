@@ -1,0 +1,59 @@
+### Import Youtube Video
+
+POST http://localhost:3000/youtube/import
+Content-Type: application/json
+
+{
+  "url": "https://youtu.be/TbB7hSBVKDM?si=S74O6qc9Gghc4Mjl"
+}
+
+### Get Videos
+
+GET http://localhost:3000/youtube/videos
+
+### Create Chat
+
+POST http://localhost:3000/chat/create
+Content-Type: application/json
+
+{
+  "videoIds": ["d1110507-d3a2-4fe0-ab11-a614d952acf0", "fd57ad3b-709c-43f8-83d0-e391f769689d"]
+}
+
+### Ask a Question (Standard - Non-Streaming)
+
+POST http://localhost:3000/chat/ask
+Content-Type: application/json
+
+{
+  "chatId": "1af795ff-eaa4-4fd1-a063-82d281adb2df",
+  "question": "What is the main topic of each videos?"
+}
+
+### Ask a Question (SSE Streaming)
+# Note: This endpoint uses Server-Sent Events for real-time streaming
+# POST endpoint that returns SSE stream (supports request body!)
+
+POST http://localhost:3000/chat/ask-stream
+Content-Type: application/json
+
+{
+  "chatId": "1af795ff-eaa4-4fd1-a063-82d281adb2df",
+  "question": "can you list all of the techniques from the video for me"
+}
+
+### Get Chat Messages
+
+GET http://localhost:3000/chat/messages?chatId=98b3843c-cd40-4365-890d-4448da7c0a06
+
+### Get Chats
+
+GET http://localhost:3000/chat/chats
+
+### Delete Chat
+
+DELETE http://localhost:3000/chat?chatId=98b3843c-cd40-4365-890d-4448da7c0a06
+
+### Delete Video
+
+DELETE http://localhost:3000/youtube/video?videoId=d1110507-d3a2-4fe0-ab11-a614d952acf0
