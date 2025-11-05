@@ -1,11 +1,6 @@
 pipeline {
   agent { label 'lab-server' }
 
-  options {
-    timestamps()
-    ansiColor('xterm')
-  }
-
   environment {
     PROJECT_DIR = "${WORKSPACE}"
   }
