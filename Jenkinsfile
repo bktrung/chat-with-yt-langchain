@@ -27,7 +27,7 @@ pipeline {
       steps {
         sh '''
           echo "Building images..."
-          docker compose build --no-cache
+          sudo docker compose build --no-cache
         '''
       }
     }
@@ -36,16 +36,16 @@ pipeline {
       steps {
         sh '''
           echo "Cleaning old containers..."
-          docker compose down || true
+          sudo docker compose down || true
 
           echo "Pulling latest base images..."
-          docker compose pull || true
+          sudo docker compose pull || true
 
           echo "Starting containers..."
-          docker compose up -d --build
+          sudo docker compose up -d --build
 
           echo "Cleaning unused images..."
-          docker system prune -f
+          sudo docker system prune -f
         '''
       }
     }
@@ -54,7 +54,7 @@ pipeline {
       steps {
         sh '''
           echo "Current running containers:"
-          docker ps --format "table {{.Names}}\\t{{.Status}}\\t{{.Ports}}"
+          sudo docker ps --format "table {{.Names}}\\t{{.Status}}\\t{{.Ports}}"
         '''
       }
     }
