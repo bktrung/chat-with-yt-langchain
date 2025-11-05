@@ -12,21 +12,5 @@ services:
     volumes:
       - pgvector_data:/var/lib/postgresql/data
 
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: yt-rag-pgadmin
-    restart: unless-stopped
-    depends_on:
-      - db
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-    ports:
-      - 8080:80
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-
 volumes:
   pgvector_data:
-  pgadmin_data:
