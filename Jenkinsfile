@@ -5,7 +5,8 @@ pipeline {
     PROJECT_DIR = "${WORKSPACE}"
   }
 
-  stage('Environment Info') {
+  stages {
+    stage('Environment Info') {
       steps {
         sh '''
           echo "Running as: $(whoami)"
