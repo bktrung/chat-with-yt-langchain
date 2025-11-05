@@ -1,6 +1,11 @@
 pipeline {
   agent { label 'lab-server' }
 
+  options {
+    timestamps()
+    ansiColor('xterm')
+  }
+
   environment {
     PROJECT_DIR = "${WORKSPACE}"
   }
@@ -17,7 +22,6 @@ pipeline {
       }
     }
 
-  stages {
     stage('Checkout Source') {
       steps {
         checkout scm
