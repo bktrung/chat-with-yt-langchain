@@ -5,6 +5,17 @@ pipeline {
     PROJECT_DIR = "${WORKSPACE}"
   }
 
+  stage('Environment Info') {
+      steps {
+        sh '''
+          echo "Running as: $(whoami)"
+          echo "Current directory: $(pwd)"
+          docker --version
+          docker compose version
+        '''
+      }
+    }
+
   stages {
     stage('Checkout Source') {
       steps {
