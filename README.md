@@ -297,3 +297,22 @@ pipeline {
 4.  Click the build number and then **Console Output** to watch the stages run in real-time on your `web-server`.
 
 If everything is successful, your application is now deployed\! Any future `git push` to the `main` branch will automatically redeploy the application.
+
+-----
+
+### Note: Fixing Docker "Permission Denied"
+
+If your pipeline fails with a "permission denied" error when running Docker, the `usermod` change may not have applied to the agent.
+
+Use this `visudo` fallback on the **agent server (`web-server`)**:
+
+1.  Open the `sudoers` editor for a new file:
+    ```bash
+    sudo visudo -f /etc/sudoers.d/jenkins
+    ```
+2.  Add this line to the file and save it:
+    ```
+    jenkins ALL=(ALL) NOPASSWD: /usr/bin/docker
+    jenkins ALL=(ALL) NOPASSWD: /usr/local/bin/docker-compose
+    ```
+3.  Update your `Jenkinsfile` by adding `sudo` before every `docker` and `docker compose` command.
