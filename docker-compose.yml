@@ -18,7 +18,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    command: sh -c "npx drizzle-kit push && node dist/src/main"
     env_file:
       - ./backend/.env
     environment:
