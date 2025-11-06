@@ -40,7 +40,7 @@ pipeline {
               env.useChoice = input message: "Can it be deployed?",
                 paramaters: [choice(name: deploy, choice: 'no\nyes', description: 'Choose "yes" if you want to deploy')]
             }
-            if (env.useChoice == 'yes) {
+            if (env.useChoice == 'yes') {
               sh '''
                     echo "Cleaning old containers..."
                     sudo docker compose down || true
