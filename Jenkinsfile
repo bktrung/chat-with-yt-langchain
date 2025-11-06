@@ -35,30 +35,36 @@ pipeline {
     stage('Deploy Containers') {
       steps {
         script {
+          def useChoice = 'no'
+
           try {
             timeout(time: 5, unit: 'MINUTES') {
-              env.useChoice = input message: "Can it be deployed?",
-                paramaters: [choice(name: deploy, choice: 'no\nyes', description: 'Choose "yes" if you want to deploy')]
+              useChoice = input message: "Can it be deployed?",
+                parameters: [choice(name: 'deploy', choices: ['no', 'yes'], description: 'Choose "yes" if you want to deploy')]
             }
-            if (env.useChoice == 'yes') {
+
+            if (useChoice == 'yes') {
               sh '''
-                    echo "Cleaning old containers..."
-                    sudo docker compose down || true
-          
-                    echo "Pulling latest base images..."
-                    sudo docker compose pull || true
-          
-                    echo "Starting containers..."
-                    sudo docker compose up -d --build
-          
-                    echo "Cleaning unused images..."
-                    sudo docker system prune -f
-                 '''
+                  echo "Cleaning old containers..."
+                  sudo docker compose down || true
+        
+                  echo "Pulling latest base images..."
+                  sudo docker compose pull || true
+        
+                  echo "Starting containers..."
+                  sudo docker compose up -d --build
+        
+                  echo "Cleaning unused images..."
+                  sudo docker system prune -f
+              '''
             } else {
-              echo "Do not confirm the deployment!"
+              echo "User chose 'no'. Deployment skipped."
             }
           } catch (Exception err) {
-            
+            echo "Input timed out or was aborted. Aborting deployment."
+            echo "Error: ${err.message}"
+            currentBuild.result = 'ABORTED' 
+            error("Deployment step aborted.")
           }
         }
       }
