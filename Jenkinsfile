@@ -34,19 +34,33 @@ pipeline {
 
     stage('Deploy Containers') {
       steps {
-        sh '''
-          echo "Cleaning old containers..."
-          sudo docker compose down || true
-
-          echo "Pulling latest base images..."
-          sudo docker compose pull || true
-
-          echo "Starting containers..."
-          sudo docker compose up -d --build
-
-          echo "Cleaning unused images..."
-          sudo docker system prune -f
-        '''
+        script {
+          try {
+            timeout(time: 5, unit: 'MINUTES') {
+              env.useChoice = input message: "Can it be deployed?",
+                paramaters: [choice(name: deploy, choice: 'no\nyes', description: 'Choose "yes" if you want to deploy')]
+            }
+            if (env.useChoice == 'yes) {
+              sh '''
+                    echo "Cleaning old containers..."
+                    sudo docker compose down || true
+          
+                    echo "Pulling latest base images..."
+                    sudo docker compose pull || true
+          
+                    echo "Starting containers..."
+                    sudo docker compose up -d --build
+          
+                    echo "Cleaning unused images..."
+                    sudo docker system prune -f
+                 '''
+            } else {
+              echo "Do not confirm the deployment!"
+            }
+          } catch (Exception err) {
+            
+          }
+        }
       }
     }
 
