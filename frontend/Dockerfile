@@ -10,7 +10,7 @@ ARG VITE_API_URL=/api
 ENV VITE_API_URL=${VITE_API_URL}
 RUN npm run build
 
-FROM nginx:1.27-alpine AS runner
+FROM nginx:mainline-trixie-perl AS runner
 RUN addgroup -g 1001 -S nginx && \
     adduser -S nginx -u 1001 -G nginx
 
