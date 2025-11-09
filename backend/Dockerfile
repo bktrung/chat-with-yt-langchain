@@ -6,23 +6,32 @@ RUN apk add --no-cache libc6-compat
 
 FROM base AS deps
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --only=production && \
+    npm cache clean --force
 
 FROM base AS build
-COPY --from=deps /app/node_modules ./node_modules
+COPY package*.json ./
+RUN npm ci
 COPY . .
 RUN npm run build
 
 FROM node:22-alpine AS runner
 WORKDIR /app
-RUN apk add --no-cache libc6-compat
-COPY package*.json ./
-RUN npm ci --omit=dev
-RUN npm install -g drizzle-kit
-COPY --from=build /app/dist ./dist
-COPY drizzle.config.ts ./drizzle.config.ts
-COPY src/database ./src/database
+RUN apk add --no-cache libc6-compat dumb-init && \
+    addgroup -g 1001 -S ytchat && \
+    adduser -S ytchat -u 1001
+
+COPY --from=deps --chown=ytchat:ytchat /app/node_modules ./node_modules
+COPY --from=build --chown=ytchat:ytchat /app/dist ./dist
+COPY --chown=ytchat:ytchat package*.json ./
+
+USER ytchat
 ENV NODE_ENV=production
-RUN mkdir -p logs
 EXPOSE 3000
-CMD ["sh", "-c", "drizzle-kit push && node dist/src/main"]
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s \
+  CMD node -e "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["node", "dist/src/main"]
